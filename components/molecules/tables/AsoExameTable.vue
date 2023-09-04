@@ -2,54 +2,54 @@
   <div class="aso-table">
     <Table
       :columns="[
-        'cpf_aso',
-        'cnpj_aso',
-        'cpf_resp',
-        'coordenador_resp',
-        'crm_resp',
-        'uf_resp',
-        'tipo_aso',
-        'data_aso',
-        'resultado_aso',
-        'cpf_med',
-        'nome_med',
-        'crm_med',
-        'uf_med',
+        'tipo_ex',
+        'data_ex',
+        'procedimento_ex',
+        'obs_ex',
+        'ordem_ex',
+        'resultado_ex',
+        'cpf_ex',
+        'cnpj_ex',
+        'cpf_resp_ex',
+        'coordenador_resp_ex',
+        'crm_resp_ex',
+        'uf_resp_ex',
+        'data_aso2',
         'status'
       ]"
       striped
     >
       <Row
         v-for="{
+          TPEXAMEOCUP,
+          DTEXAME,
+          PROCREALIZADO,
+          DESCRICAOEXAME,
+          ORDEMEXAME,
+          RESASOSOC,
           CPFTRAB,
           NRINSCEMPRESA,
           CPFRESP,
           NOMERESPONSAVEL,
           NRCONSCLASSE,
           UFCONSCLASSE,
-          TPEXAMEOCUP,
           DTASO,
-          RESASO,
-          CPFMEDFICHA,
-          NMMEDFICHA,
-          NRCRMMEDFICHA,
-          UFCRMMEDFICHA,
           STATUS
         } in ASO.getASOs"
       >
+        <Column>{{ TPEXAMEOCUP }} </Column>
+        <Column>{{ DTEXAME }} </Column>
+        <Column>{{ PROCREALIZADO }} </Column>
+        <Column>{{ DESCRICAOEXAME }} </Column>
+        <Column>{{ ORDEMEXAME }} </Column>
+        <Column>{{ RESASOSOC }} </Column>
         <Column>{{ CPFTRAB }} </Column>
         <Column>{{ NRINSCEMPRESA }} </Column>
         <Column>{{ CPFRESP }} </Column>
         <Column>{{ NOMERESPONSAVEL }} </Column>
         <Column>{{ NRCONSCLASSE }} </Column>
         <Column>{{ UFCONSCLASSE }} </Column>
-        <Column>{{ TPEXAMEOCUP }} </Column>
         <Column>{{ DTASO }} </Column>
-        <Column>{{ RESASO }} </Column>
-        <Column>{{ CPFMEDFICHA }} </Column>
-        <Column>{{ NMMEDFICHA }} </Column>
-        <Column>{{ NRCRMMEDFICHA }} </Column>
-        <Column>{{ UFCRMMEDFICHA }} </Column>
         <Column>{{ STATUS }} </Column>
       </Row>
     </Table>

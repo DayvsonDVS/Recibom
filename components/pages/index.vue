@@ -17,12 +17,8 @@
       </div>
 
       <div class="sub-params">
-        <Field
-          name="companies"
-          label="Selecione uma empresa"
-          :disabled="form.values.all.allCompanies"
-          as="select"
-        >
+        <Field name="companies" label="Selecione a empresa" as="select">
+          <option value="all" selected>Todas</option>
           <option value="582049">Cesta Basica Olindense Ltda</option>
           <option value="554798">Estivas Novo Prado Ltda</option>
           <option value="510728">Feirão da Mustardinha Ltda</option>
@@ -41,8 +37,9 @@
           <option value="809143">Varejão São Martins Ltda - Matriz</option>
         </Field>
 
-        <Field name="allCompanies" as="checkbox" class="checkbox-companies">
-          Todas
+        <Field name="radioTable" as="radio-group" label="Tipo de Tabela">
+          <span as="radio-item" value="ASO" checked>ASO</span>
+          <span as="radio-item" value="EXAME">EXAME</span>
         </Field>
 
         <Button type="submit" color="primary" :disabled="form.loading"
@@ -51,7 +48,10 @@
       </div>
     </Form>
 
-    <AsoTable />
+    <div class="table">
+      <AsoTable v-show="form.values.all.radioTable === 'ASO'" />
+      <AsoExameTable v-show="form.values.all.radioTable === 'EXAME'" />
+    </div>
   </div>
 </template>
 
@@ -59,15 +59,6 @@
 import { useASO } from '@/stores/aso'
 import { Field, Form, darpi } from '@cataline.io/darpi'
 import { Button } from 'bumi-components-new'
-
-const ASO = useASO()
-
-const form = darpi.newForm({
-  companies: darpi.string(),
-  dataInicio: darpi.string().required(),
-  dataFim: darpi.string().required(),
-  allCompanies: darpi.boolean()
-})
 
 const listCompanies = [
   '582049',
@@ -84,12 +75,40 @@ const listCompanies = [
   '809143'
 ]
 
+const ASO = useASO()
+
+const form = darpi.newForm({
+  companies: darpi.string().required(),
+  dataInicio: darpi.string().required(),
+  dataFim: darpi.string().required(),
+  radioTable: darpi.string()
+})
+
+async function send() {
+  try {
+    form.loading = true
+    await useAsyncData('initASOs', () => init())
+  } catch (error) {
+  } finally {
+    form.loading = false
+  }
+}
+
 async function init() {
-  if (form.values.all.allCompanies) {
-    listCompanies.map(async (company) => {
-      await companies(company)
-    })
+  if (form.values.all.companies.includes('all')) {
+    ASO.allASOs = []
+    ASO.asos = []
+
+    for (const company of listCompanies) {
+      await fetchCompaniesASOs(company)
+    }
+
+    for (const company of listCompanies) {
+      await fetchResponsibleASOs(company)
+    }
   } else {
+    ASO.asos = []
+    ASO.allASOs = []
     await Promise.all([
       ASO.fetchASOs({
         empresa: form.values.all.companies!,
@@ -106,37 +125,52 @@ async function init() {
         tpExame: '1,2,3,4,5,6'
       })
     ])
+
+    const listSequencial = [] as string[]
+    ASO.asos.filter(({ IDFICHA }) => listSequencial.push(IDFICHA))
+
+    await Promise.all([
+      ASO.fetchResponsibleASO({
+        empresa: form.values.all.companies,
+        codigo: '185454',
+        chave: 'ffb76514e30c7cbaec94',
+        tipoSaida: 'json',
+        sequencial: listSequencial.join()
+      })
+    ])
   }
 }
 
-async function send() {
-  try {
-    form.loading = true
-    await useAsyncData('initASOs', () => init())
-    console.log(ASO.allASOs)
-  } catch (error) {
-  } finally {
-    form.loading = false
-  }
+async function fetchCompaniesASOs(company: string) {
+  await ASO.fetchAllASOs({
+    empresa: company,
+    codigo: '161890',
+    chave: 'ce2616f3f9252750be15',
+    tipoSaida: 'json',
+    funcionarioInicio: '0',
+    funcionarioFim: '9999999999',
+    pFuncionario: '0',
+    funcionario: '0',
+    dataInicio: form.values.all.dataInicio,
+    dataFim: form.values.all.dataFim,
+    pDataIncAso: '2',
+    tpExame: '1,2,3,4,5,6'
+  })
 }
 
-async function companies(company: string) {
-  await Promise.all([
-    ASO.fetchAllASOs({
-      empresa: company,
-      codigo: '161890',
-      chave: 'ce2616f3f9252750be15',
-      tipoSaida: 'json',
-      funcionarioInicio: '0',
-      funcionarioFim: '9999999999',
-      pFuncionario: '0',
-      funcionario: '0',
-      dataInicio: form.values.all.dataInicio,
-      dataFim: form.values.all.dataFim,
-      pDataIncAso: '2',
-      tpExame: '1,2,3,4,5,6'
-    })
-  ])
+async function fetchResponsibleASOs(company: string) {
+  const listSequencial = [] as string[]
+  ASO.allASOs.filter(({ IDFICHA }) => listSequencial.push(IDFICHA))
+
+  const removeDuplicateList = [...new Set(listSequencial)]
+
+  await ASO.fetchAllResponsibleASO({
+    empresa: company,
+    codigo: '185454',
+    chave: 'ffb76514e30c7cbaec94',
+    tipoSaida: 'json',
+    sequencial: removeDuplicateList.join()
+  })
 }
 </script>
 <style scoped lang="scss">
@@ -151,14 +185,11 @@ async function companies(company: string) {
   }
   .sub-params {
     display: grid;
-    grid-template-columns: 450px 50px 50px;
-    gap: 2rem;
+    grid-auto-flow: row;
+    gap: 1rem;
     align-items: center;
-    .button,
-    .checkbox-companies {
-      height: fit-content;
-      position: relative;
-      bottom: -10px;
+    :deep(.select-container) {
+      width: 420px;
     }
   }
 }

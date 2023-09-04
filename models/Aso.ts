@@ -44,6 +44,19 @@ export interface Aso {
   TPEXAME: string
   PROCREALIZADO: string
   MATRICULARH: string
+  CPFRESP: string
+  NOMERESPONSAVEL: string
+  NRCONSCLASSE: string
+  UFCONSCLASSE: string
+  STATUS: string
+}
+
+export interface responsibleASO {
+  sequencial: string
+  cpfResp: string
+  nomeResponsavel: string
+  nrConsClasse: string
+  ufConsClasse: string
 }
 
 export interface queryPayload {
@@ -59,4 +72,12 @@ export interface queryPayload {
   dataFim: string
   pDataIncAso: string
   tpExame: string
+}
+
+export interface queryPayloadResponsible {
+  empresa: string
+  codigo: string
+  chave: string
+  tipoSaida: string
+  sequencial: string
 }
