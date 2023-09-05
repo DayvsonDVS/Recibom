@@ -1,5 +1,5 @@
 <template>
-  <div class="aso-table">
+  <div class="aso-exame-table">
     <Table
       :columns="[
         'tipo_ex',
@@ -36,6 +36,7 @@
           DTASO,
           STATUS
         } in ASO.getASOs"
+        :class="!DTEXAME ? 'error' : ''"
       >
         <Column>{{ TPEXAMEOCUP }} </Column>
         <Column>{{ DTEXAME }} </Column>
@@ -62,3 +63,13 @@ import { useASO } from '@/stores/aso'
 
 const ASO = useASO()
 </script>
+
+<style lang="scss" scoped>
+.aso-exame-table {
+  :deep(tr) {
+    &.error {
+      color: red;
+    }
+  }
+}
+</style>

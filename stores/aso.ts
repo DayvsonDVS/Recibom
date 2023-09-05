@@ -23,6 +23,30 @@ export const useASO = defineStore('aso', {
       } else {
         return state.allASOs
       }
+    },
+    getDistinctASO: (state) => {
+      if (state.asos.length > 0) {
+        //remove duplicate CPF
+        const seen = new Set()
+        return state.asos.filter((item) => {
+          const value = item.CPFTRAB
+          if (!seen.has(value)) {
+            seen.add(value)
+            return true
+          }
+          return false
+        })
+      } else {
+        const seen = new Set()
+        return state.allASOs.filter((item) => {
+          const value = item.CPFTRAB
+          if (!seen.has(value)) {
+            seen.add(value)
+            return true
+          }
+          return false
+        })
+      }
     }
   },
 

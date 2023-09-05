@@ -30,12 +30,17 @@
           TPEXAMEOCUP,
           DTASO,
           RESASO,
+          CPFEMISSORASO,
           CPFMEDFICHA,
+          NMEMISSORASO,
           NMMEDFICHA,
+          NRCRMEMISSORASO,
           NRCRMMEDFICHA,
+          UFCRMEMISSORASO,
           UFCRMMEDFICHA,
           STATUS
-        } in ASO.getASOs"
+        } in ASO.getDistinctASO"
+        :class="!NMEMISSORASO && !NMMEDFICHA ? 'error' : ''"
       >
         <Column>{{ CPFTRAB }} </Column>
         <Column>{{ NRINSCEMPRESA }} </Column>
@@ -46,10 +51,10 @@
         <Column>{{ TPEXAMEOCUP }} </Column>
         <Column>{{ DTASO }} </Column>
         <Column>{{ RESASO }} </Column>
-        <Column>{{ CPFMEDFICHA }} </Column>
-        <Column>{{ NMMEDFICHA }} </Column>
-        <Column>{{ NRCRMMEDFICHA }} </Column>
-        <Column>{{ UFCRMMEDFICHA }} </Column>
+        <Column>{{ CPFMEDFICHA ? CPFMEDFICHA : CPFEMISSORASO }} </Column>
+        <Column>{{ NMMEDFICHA ? NMMEDFICHA : NMEMISSORASO }} </Column>
+        <Column>{{ NRCRMMEDFICHA ? NRCRMMEDFICHA : NRCRMEMISSORASO }} </Column>
+        <Column>{{ UFCRMMEDFICHA ? UFCRMMEDFICHA : UFCRMEMISSORASO }} </Column>
         <Column>{{ STATUS }} </Column>
       </Row>
     </Table>
@@ -62,3 +67,13 @@ import { useASO } from '@/stores/aso'
 
 const ASO = useASO()
 </script>
+
+<style lang="scss" scoped>
+.aso-table {
+  :deep(tr) {
+    &.error {
+      color: red;
+    }
+  }
+}
+</style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="index">
+  <div class="index" ref="index">
     <Form :form="form" @submit="send">
       <div class="date-params">
         <Field
@@ -17,7 +17,12 @@
       </div>
 
       <div class="sub-params">
-        <Field name="companies" label="Selecione a empresa" as="select">
+        <Field
+          name="companies"
+          label="Selecione a empresa"
+          as="select"
+          :disabled="form.loading"
+        >
           <option value="all" selected>Todas</option>
           <option value="582049">Cesta Basica Olindense Ltda</option>
           <option value="554798">Estivas Novo Prado Ltda</option>
@@ -76,6 +81,7 @@ const listCompanies = [
 ]
 
 const ASO = useASO()
+const index = ref<HTMLElement>()
 
 const form = darpi.newForm({
   companies: darpi.string().required(),
@@ -87,10 +93,13 @@ const form = darpi.newForm({
 async function send() {
   try {
     form.loading = true
+    index.value!.style.cursor = 'progress'
+
     await useAsyncData('initASOs', () => init())
   } catch (error) {
   } finally {
     form.loading = false
+    index.value!.style.cursor = 'default'
   }
 }
 
