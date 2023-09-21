@@ -1,9 +1,7 @@
-import { $fetch } from 'ohmyfetch'
+import axios from 'axios'
 
-export const useRequest = $fetch.create({
+export const useAxios = axios.create({
   baseURL: `https://cors-anywhere-2okrk.ondigitalocean.app/https://ws1.soc.com.br/WebSoc`,
 
-  async onResponseError({ response }) {
-    console.log(response)
-  }
+  responseEncoding: 'utf8'
 })

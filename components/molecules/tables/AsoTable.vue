@@ -52,9 +52,17 @@
         <Column>{{ DTASO }} </Column>
         <Column>{{ RESASO }} </Column>
         <Column>{{ CPFMEDFICHA ? CPFMEDFICHA : CPFEMISSORASO }} </Column>
-        <Column>{{ NMMEDFICHA ? NMMEDFICHA : NMEMISSORASO }} </Column>
-        <Column>{{ NRCRMMEDFICHA ? NRCRMMEDFICHA : NRCRMEMISSORASO }} </Column>
-        <Column>{{ UFCRMMEDFICHA ? UFCRMMEDFICHA : UFCRMEMISSORASO }} </Column>
+        <Column
+          >{{
+            NMEMISSORASO ? NMEMISSORASO.toUpperCase() : NMMEDFICHA.toUpperCase()
+          }}
+        </Column>
+        <Column
+          >{{ NRCRMEMISSORASO ? NRCRMEMISSORASO : NRCRMMEDFICHA }}
+        </Column>
+        <Column
+          >{{ UFCRMEMISSORASO ? UFCRMEMISSORASO : UFCRMMEDFICHA }}
+        </Column>
         <Column>{{ STATUS }} </Column>
       </Row>
     </Table>

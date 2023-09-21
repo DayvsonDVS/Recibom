@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { useRequest } from '@/composables/useRequest'
+import { useAxios } from '@/composables/useRequest'
 import {
   Aso,
   responsibleASO,
@@ -52,38 +52,46 @@ export const useASO = defineStore('aso', {
 
   actions: {
     async fetchASOs(payload: queryPayload) {
-      this.asos = JSON.parse(
-        await useRequest(
-          `/exportadados?parametro={"empresa":${payload.empresa},"codigo":${payload.codigo},"chave":${payload.chave},"tipoSaida":${payload.tipoSaida},"funcionarioInicio":${payload.funcionarioInicio},"funcionarioFim":${payload.funcionarioFim},"pFuncionario":${payload.pFuncionario},"funcionario":${payload.funcionario},"dataInicio":"${payload.dataInicio}","dataFim":"${payload.dataFim}","pDataIncAso":${payload.pDataIncAso},"tpExame":"${payload.tpExame}"}`,
-          {
-            method: 'get'
-          }
-        )
-      ) as Aso[]
+      // this.asos = JSON.parse(
+      //   await useRequest(
+      //     `/exportadados?parametro={"empresa":${payload.empresa},"codigo":${payload.codigo},"chave":${payload.chave},"tipoSaida":${payload.tipoSaida},"funcionarioInicio":${payload.funcionarioInicio},"funcionarioFim":${payload.funcionarioFim},"pFuncionario":${payload.pFuncionario},"funcionario":${payload.funcionario},"dataInicio":"${payload.dataInicio}","dataFim":"${payload.dataFim}","pDataIncAso":${payload.pDataIncAso},"tpExame":"${payload.tpExame}"}`,
+      //     {
+      //       method: 'get'
+      //     }
+      //   )
+      // ) as Aso[]
+
+      const { data } = await useAxios(
+        `/exportadados?parametro={"empresa":${payload.empresa},"codigo":${payload.codigo},"chave":${payload.chave},"tipoSaida":${payload.tipoSaida},"funcionarioInicio":${payload.funcionarioInicio},"funcionarioFim":${payload.funcionarioFim},"pFuncionario":${payload.pFuncionario},"funcionario":${payload.funcionario},"dataInicio":"${payload.dataInicio}","dataFim":"${payload.dataFim}","pDataIncAso":${payload.pDataIncAso},"tpExame":"${payload.tpExame}"}`,
+        {
+          method: 'get'
+        }
+      )
+
+      this.asos = data
     },
 
     async fetchAllASOs(payload: queryPayload) {
-      this.auxASOs = JSON.parse(
-        await useRequest(
-          `/exportadados?parametro={"empresa":${payload.empresa},"codigo":${payload.codigo},"chave":${payload.chave},"tipoSaida":${payload.tipoSaida},"funcionarioInicio":${payload.funcionarioInicio},"funcionarioFim":${payload.funcionarioFim},"pFuncionario":${payload.pFuncionario},"funcionario":${payload.funcionario},"dataInicio":"${payload.dataInicio}","dataFim":"${payload.dataFim}","pDataIncAso":${payload.pDataIncAso},"tpExame":"${payload.tpExame}"}`,
-          {
-            method: 'get'
-          }
-        )
-      ) as Aso[]
+      const { data } = await useAxios(
+        `/exportadados?parametro={"empresa":${payload.empresa},"codigo":${payload.codigo},"chave":${payload.chave},"tipoSaida":${payload.tipoSaida},"funcionarioInicio":${payload.funcionarioInicio},"funcionarioFim":${payload.funcionarioFim},"pFuncionario":${payload.pFuncionario},"funcionario":${payload.funcionario},"dataInicio":"${payload.dataInicio}","dataFim":"${payload.dataFim}","pDataIncAso":${payload.pDataIncAso},"tpExame":"${payload.tpExame}"}`,
+        {
+          method: 'get'
+        }
+      )
+      this.auxASOs = data
 
       this.allASOs.push(...this.auxASOs)
     },
 
     async fetchResponsibleASO(payload: queryPayloadResponsible) {
-      this.responsible = JSON.parse(
-        await useRequest(
-          `/exportadados?parametro={"empresa":${payload.empresa},"codigo":${payload.codigo},"chave":${payload.chave},"tipoSaida":${payload.tipoSaida},"sequencial":"${payload.sequencial}"}`,
-          {
-            method: 'get'
-          }
-        )
+      const { data } = await useAxios(
+        `/exportadados?parametro={"empresa":${payload.empresa},"codigo":${payload.codigo},"chave":${payload.chave},"tipoSaida":${payload.tipoSaida},"sequencial":"${payload.sequencial}"}`,
+        {
+          method: 'get'
+        }
       )
+
+      this.responsible = data
 
       this.asos.map((aso) => {
         const object = this.searchIDSequential(this.responsible, aso.IDFICHA)
@@ -96,14 +104,14 @@ export const useASO = defineStore('aso', {
     },
 
     async fetchAllResponsibleASO(payload: queryPayloadResponsible) {
-      this.auxResponsible = JSON.parse(
-        await useRequest(
-          `/exportadados?parametro={"empresa":${payload.empresa},"codigo":${payload.codigo},"chave":${payload.chave},"tipoSaida":${payload.tipoSaida},"sequencial":"${payload.sequencial}"}`,
-          {
-            method: 'get'
-          }
-        )
+      const { data } = await useAxios(
+        `/exportadados?parametro={"empresa":${payload.empresa},"codigo":${payload.codigo},"chave":${payload.chave},"tipoSaida":${payload.tipoSaida},"sequencial":"${payload.sequencial}"}`,
+        {
+          method: 'get'
+        }
       )
+
+      this.auxResponsible = data
 
       this.responsible.push(...this.auxResponsible)
 
