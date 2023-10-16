@@ -14,6 +14,7 @@ export const useASO = defineStore('aso', {
     auxASOs: [] as Aso[],
     responsible: [] as responsibleASO[],
     auxResponsible: [] as responsibleASO[],
+    readyDownload: false,
     listCNPJ: [
       { id: '582049', cnpj: '69.933.844/0001-91' },
       { id: '554798', cnpj: '08.029.696/0003-52' },

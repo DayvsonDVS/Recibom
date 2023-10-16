@@ -32,13 +32,17 @@
           <span as="radio-item" value="EXAME">EXAME</span>
         </Field>
 
-        <Button type="submit" color="primary" :disabled="form.loading">Consultar</Button>
+        <div class="wrapper-button">
+          <Button type="submit" color="primary" :disabled="form.loading">Consultar</Button>
+          <Button color="success" :disabled="!ASO.readyDownload"
+            @click="form.values.all.radioTable === 'ASO' ? downloadTableAsExcel('asoId', 'ASOs.xlsx') : downloadTableAsExcel('examesId', 'EXAMES.xlsx')">Download</Button>
+        </div>
       </div>
     </Form>
 
     <div class="table">
-      <AsoTable v-show="form.values.all.radioTable === 'ASO'" />
-      <AsoExameTable v-show="form.values.all.radioTable === 'EXAME'" />
+      <AsoTable id="asoId" v-show="form.values.all.radioTable === 'ASO'" />
+      <AsoExameTable id="examesId" v-show="form.values.all.radioTable === 'EXAME'" />
     </div>
   </div>
 </template>
@@ -47,6 +51,7 @@
 import { useASO } from '@/stores/aso'
 import { Field, Form, darpi } from '@cataline.io/darpi'
 import { Button } from 'bumi-components-new'
+import * as XLSX from 'xlsx'
 
 const listCompanies = [
   '582049',
@@ -76,12 +81,14 @@ const form = darpi.newForm({
 async function send() {
   try {
     form.loading = true
+    ASO.readyDownload = false
     index.value!.style.cursor = 'progress'
 
     await useAsyncData('initASOs', () => init())
   } catch (error) {
   } finally {
     form.loading = false
+    ASO.readyDownload = true
     index.value!.style.cursor = 'default'
   }
 }
@@ -165,6 +172,32 @@ async function fetchResponsibleASOs(company: string) {
   })
 }
 
+function downloadTableAsExcel(tableId: string, filename: string) {
+  const table = document.getElementById(tableId);
+  if (table) {
+    const wb = XLSX.utils.table_to_book(table, { sheet: 'Sheet 1', raw: true });
+    const wbout = XLSX.write(wb, {
+      bookType: 'xlsx',
+      type: 'array',
+      bookSST: true,
+      cellDates: true,
+      cellStyles: true,
+    });
+    saveAsExcel(wbout, filename);
+  } else {
+    console.error(`Table with id ${tableId} not found.`);
+  }
+}
+
+function saveAsExcel(buffer: any, filename: string) {
+  const data = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  const url = window.URL.createObjectURL(data);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  window.URL.revokeObjectURL(url);
+}
 </script>
 <style scoped lang="scss">
 .index {
@@ -187,6 +220,15 @@ async function fetchResponsibleASOs(company: string) {
     :deep(.select-container) {
       width: 420px;
     }
+
+    .wrapper-button {
+      display: grid;
+      grid-auto-flow: column;
+      justify-content: left;
+      gap: 2rem;
+
+    }
   }
+
 }
 </style>
