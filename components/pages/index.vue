@@ -2,27 +2,12 @@
   <div class="index" ref="index">
     <Form :form="form" @submit="send">
       <div class="date-params">
-        <Field
-          label="Data inicial"
-          name="dataInicio"
-          placeholder="00/00/0000"
-          mask="99/99/9999"
-        />
-        <Field
-          label="Data final"
-          name="dataFim"
-          placeholder="00/00/0000"
-          mask="99/99/9999"
-        />
+        <Field label="Data inicial" name="dataInicio" placeholder="00/00/0000" mask="99/99/9999" />
+        <Field label="Data final" name="dataFim" placeholder="00/00/0000" mask="99/99/9999" />
       </div>
 
       <div class="sub-params">
-        <Field
-          name="companies"
-          label="Selecione a empresa"
-          as="select"
-          :disabled="form.loading"
-        >
+        <Field name="companies" label="Selecione a empresa" as="select" :disabled="form.loading">
           <option value="all" selected>Todas</option>
           <option value="582049">Cesta Basica Olindense Ltda</option>
           <option value="554798">Estivas Novo Prado Ltda</option>
@@ -47,9 +32,7 @@
           <span as="radio-item" value="EXAME">EXAME</span>
         </Field>
 
-        <Button type="submit" color="primary" :disabled="form.loading"
-          >Consultar</Button
-        >
+        <Button type="submit" color="primary" :disabled="form.loading">Consultar</Button>
       </div>
     </Form>
 
@@ -181,22 +164,26 @@ async function fetchResponsibleASOs(company: string) {
     sequencial: removeDuplicateList.join()
   })
 }
+
 </script>
 <style scoped lang="scss">
 .index {
   padding: 15px;
   display: grid;
   gap: 1rem;
+
   .date-params {
     display: grid;
     grid-template-columns: repeat(2, max-content);
     gap: 1rem;
   }
+
   .sub-params {
     display: grid;
     grid-auto-flow: row;
     gap: 1rem;
     align-items: center;
+
     :deep(.select-container) {
       width: 420px;
     }

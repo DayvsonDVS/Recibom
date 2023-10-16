@@ -13,7 +13,21 @@ export const useASO = defineStore('aso', {
     allASOs: [] as Aso[],
     auxASOs: [] as Aso[],
     responsible: [] as responsibleASO[],
-    auxResponsible: [] as responsibleASO[]
+    auxResponsible: [] as responsibleASO[],
+    listCNPJ: [
+      { id: '582049', cnpj: '69.933.844/0001-91' },
+      { id: '554798', cnpj: '08.029.696/0003-52' },
+      { id: '510728', cnpj: '00.943.155/0001-61' },
+      { id: '723851', cnpj: '00.943.155/0002-42' },
+      { id: '512817', cnpj: '08.845.439/0003-99' },
+      { id: '823378', cnpj: '08.845.439/0005-50' },
+      { id: '717005', cnpj: '03.007.712/0005-54' },
+      { id: '509456', cnpj: '03.007.712/0004-73' },
+      { id: '823389', cnpj: '03.007.712/0002-01' },
+      { id: '723848', cnpj: '03.007.712/0001-20' },
+      { id: '514165', cnpj: '00.518.356/0002-00' },
+      { id: '809143', cnpj: '00.518.356/0001-11' }
+    ]
   }),
 
   getters: {
@@ -69,6 +83,7 @@ export const useASO = defineStore('aso', {
       )
 
       this.asos = data
+      await this.updateCNPJ()
     },
 
     async fetchAllASOs(payload: queryPayload) {
@@ -81,6 +96,7 @@ export const useASO = defineStore('aso', {
       this.auxASOs = data
 
       this.allASOs.push(...this.auxASOs)
+      await this.updateCNPJ()
     },
 
     async fetchResponsibleASO(payload: queryPayloadResponsible) {
@@ -140,6 +156,27 @@ export const useASO = defineStore('aso', {
         return foundItem
       } else {
         return null
+      }
+    },
+
+    async updateCNPJ() {
+      if (this.asos) {
+        this.asos = this.asos.filter((aso) => {
+          return this.listCNPJ.filter((company) => {
+            if (aso.CODIGOEMPRESA === company.id) {
+              return (aso.NRINSCEMPRESA = company.cnpj)
+            }
+          })
+        })
+      }
+      if (this.allASOs) {
+        this.allASOs = this.allASOs.filter((aso) => {
+          return this.listCNPJ.filter((company) => {
+            if (aso.CODIGOEMPRESA === company.id) {
+              return (aso.NRINSCEMPRESA = company.cnpj)
+            }
+          })
+        })
       }
     }
   }
