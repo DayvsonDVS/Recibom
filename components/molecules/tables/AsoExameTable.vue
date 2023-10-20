@@ -39,7 +39,7 @@
         <Column>{{ ORDEMEXAME }} </Column>
         <Column>{{ RESASOSOC }} </Column>
         <Column>{{ CPFTRAB?.replace(/[,.\/-]/g, '').replace(/^0+/, '') }} </Column>
-        <Column>{{ NRINSCEMPRESA?.replace(/[,.\/-]/g, '').replace(/^0+/, '') }} </Column>
+        <Column>{{ NRINSCEMPRESA?.replace(/[,.\/-]/g, '') }} </Column>
         <Column>{{ CPFRESP?.replace(/[,.\/-]/g, '') }} </Column>
         <Column>{{ NOMERESPONSAVEL }} </Column>
         <Column>{{ NRCONSCLASSE }} </Column>
