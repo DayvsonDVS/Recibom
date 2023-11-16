@@ -45,7 +45,8 @@
         <Column>{{ TPEXAMEOCUP }} </Column>
         <Column>{{ DTASO }} </Column>
         <Column>{{ RESASO }} </Column>
-        <Column>{{ CPFMEDFICHA ? CPFMEDFICHA.replace(/[,.\/-]/g, '') : CPFEMISSORASO.replace(/[,.\/-]/g, '') }} </Column>
+        <Column>{{ CPFEMISSORASO ? CPFEMISSORASO.replace(/[,.\/-]/g, '') : CPFMEDFICHA.replace(/[,.\/-]/g, '') }}
+        </Column>
         <Column>{{
           NMEMISSORASO ? NMEMISSORASO.toUpperCase() : NMMEDFICHA.toUpperCase()
         }}
