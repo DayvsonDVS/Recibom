@@ -44,7 +44,8 @@ export const useASO = defineStore('aso', {
         //remove duplicate CPF
         const seen = new Set()
         return state.asos.filter((item) => {
-          const value = item.CPFTRAB
+          const value = item.CPFTRAB + item.DTASO
+
           if (!seen.has(value)) {
             seen.add(value)
             return true
@@ -54,7 +55,8 @@ export const useASO = defineStore('aso', {
       } else {
         const seen = new Set()
         return state.allASOs.filter((item) => {
-          const value = item.CPFTRAB
+          const value = item.CPFTRAB + item.DTASO
+
           if (!seen.has(value)) {
             seen.add(value)
             return true
