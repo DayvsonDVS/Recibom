@@ -105,6 +105,7 @@ async function init() {
     for (const company of listCompanies) {
       await fetchResponsibleASOs(company)
     }
+
   } else {
     ASO.asos = []
     ASO.allASOs = []
@@ -128,6 +129,7 @@ async function init() {
     const listSequencial = [] as string[]
     ASO.asos.filter(({ IDFICHA }) => listSequencial.push(IDFICHA))
 
+
     await Promise.all([
       ASO.fetchResponsibleASO({
         empresa: form.values.all.companies,
@@ -137,6 +139,7 @@ async function init() {
         sequencial: listSequencial.join()
       })
     ])
+
   }
 }
 
@@ -163,13 +166,36 @@ async function fetchResponsibleASOs(company: string) {
 
   const removeDuplicateList = [...new Set(listSequencial)]
 
-  await ASO.fetchAllResponsibleASO({
-    empresa: company,
-    codigo: '185454',
-    chave: 'ffb76514e30c7cbaec94',
-    tipoSaida: 'json',
-    sequencial: removeDuplicateList.join()
-  })
+  if (removeDuplicateList.length > 100) {
+    const [part1, part2] = splitListInHalf(removeDuplicateList)
+
+    await ASO.fetchAllResponsibleASO({
+      empresa: company,
+      codigo: '185454',
+      chave: 'ffb76514e30c7cbaec94',
+      tipoSaida: 'json',
+      sequencial: part1.join()
+    })
+
+    await ASO.fetchAllResponsibleASO({
+      empresa: company,
+      codigo: '185454',
+      chave: 'ffb76514e30c7cbaec94',
+      tipoSaida: 'json',
+      sequencial: part2.join()
+    })
+
+  }
+  else {
+    await ASO.fetchAllResponsibleASO({
+      empresa: company,
+      codigo: '185454',
+      chave: 'ffb76514e30c7cbaec94',
+      tipoSaida: 'json',
+      sequencial: removeDuplicateList.join()
+    })
+  }
+
 }
 
 function downloadTableAsExcel(tableId: string, filename: string) {
@@ -197,6 +223,16 @@ function saveAsExcel(buffer: any, filename: string) {
   a.download = filename;
   a.click();
   window.URL.revokeObjectURL(url);
+}
+
+function splitListInHalf(inputList: string[]): [string[], string[]] {
+  const length = inputList.length;
+  const half = Math.floor(length / 2);
+
+  const firstHalf = inputList.slice(0, half);
+  const secondHalf = inputList.slice(half);
+
+  return [firstHalf, secondHalf];
 }
 </script>
 <style scoped lang="scss">
