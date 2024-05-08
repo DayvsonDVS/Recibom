@@ -31,6 +31,8 @@ Build the application for production:
 
 ```bash
 npm run build
+
+pm2 start ecosystem.config.js --env qa
 ```
 
 Locally preview production build:
