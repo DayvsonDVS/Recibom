@@ -30,12 +30,13 @@
         <Field name="radioTable" as="radio-group" label="Tipo de Tabela">
           <span as="radio-item" value="ASO" checked>ASO</span>
           <span as="radio-item" value="EXAME">EXAME</span>
+          <span as="radio-item" value="TOXICOLÓGICO">TOXICOLÓGICO</span>
         </Field>
 
         <div class="wrapper-button">
           <Button type="submit" color="primary" :disabled="form.loading">Consultar</Button>
           <Button color="success" :disabled="!ASO.readyDownload"
-            @click="form.values.all.radioTable === 'ASO' ? downloadTableAsExcel('asoId', 'ASOs.xlsx') : downloadTableAsExcel('examesId', 'EXAMES.xlsx')">Download</Button>
+            @click=" download(form.values.all.radioTable!)">Download</Button>
         </div>
       </div>
     </Form>
@@ -43,6 +44,7 @@
     <div class="table">
       <AsoTable id="asoId" v-show="form.values.all.radioTable === 'ASO'" />
       <AsoExameTable id="examesId" v-show="form.values.all.radioTable === 'EXAME'" />
+      <ToxicTable id="toxicId" v-show="form.values.all.radioTable === 'TOXICOLÓGICO'" />
     </div>
   </div>
 </template>
@@ -97,6 +99,7 @@ async function init() {
   if (form.values.all.companies.includes('all')) {
     ASO.allASOs = []
     ASO.asos = []
+    ASO.toxics = []
 
     for (const company of listCompanies) {
       await fetchCompaniesASOs(company)
@@ -109,6 +112,8 @@ async function init() {
   } else {
     ASO.asos = []
     ASO.allASOs = []
+    ASO.toxics = []
+
     await Promise.all([
       ASO.fetchASOs({
         empresa: form.values.all.companies!,
@@ -123,6 +128,22 @@ async function init() {
         dataFim: form.values.all.dataFim,
         pDataIncAso: '2',
         tpExame: '1,2,3,4,5,6'
+      })
+    ])
+
+    await Promise.all([
+      ASO.fetchToxicologico({
+        empresa: form.values.all.companies!,
+        codigo: '196089',
+        chave: 'da258baa4642c8184cf5',
+        tipoSaida: 'json',
+        funcionarioInicio: '0',
+        funcionarioFim: '9999999999',
+        pFuncionario: '0',
+        funcionario: '0',
+        dataInicio: form.values.all.dataInicio,
+        dataFim: form.values.all.dataFim,
+        pDataToxic: ""
       })
     ])
 
@@ -157,6 +178,19 @@ async function fetchCompaniesASOs(company: string) {
     dataFim: form.values.all.dataFim,
     pDataIncAso: '2',
     tpExame: '1,2,3,4,5,6'
+  })
+  await ASO.fetchToxicologico({
+    empresa: company,
+    codigo: '196089',
+    chave: 'da258baa4642c8184cf5',
+    tipoSaida: 'json',
+    funcionarioInicio: '0',
+    funcionarioFim: '9999999999',
+    pFuncionario: '0',
+    funcionario: '0',
+    dataInicio: form.values.all.dataInicio,
+    dataFim: form.values.all.dataFim,
+    pDataToxic: ''
   })
 }
 
@@ -196,6 +230,18 @@ async function fetchResponsibleASOs(company: string) {
     })
   }
 
+}
+
+function download(fileName: string) {
+  if (fileName === 'ASO') {
+    downloadTableAsExcel('asoId', 'ASOs.xlsx')
+  }
+  else if (fileName === 'EXAME') {
+    downloadTableAsExcel('examesId', 'EXAMES.xlsx')
+  }
+  else {
+    downloadTableAsExcel('toxicId', 'Toxicológico.xlsx')
+  }
 }
 
 function downloadTableAsExcel(tableId: string, filename: string) {

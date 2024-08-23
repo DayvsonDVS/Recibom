@@ -6,12 +6,15 @@ import {
   queryPayload,
   queryPayloadResponsible
 } from '@/models/Aso'
+import { Toxicologico, queryPayloadToxicologico } from '@/models/Toxicologico'
 
 export const useASO = defineStore('aso', {
   state: () => ({
     asos: [] as Aso[],
     allASOs: [] as Aso[],
+    toxics: [] as Toxicologico[],
     auxASOs: [] as Aso[],
+    auxToxics: [] as Toxicologico[],
     responsible: [] as responsibleASO[],
     auxResponsible: [] as responsibleASO[],
     readyDownload: false,
@@ -64,20 +67,16 @@ export const useASO = defineStore('aso', {
           return false
         })
       }
+    },
+    getToxic: (state) => {
+      if (state.toxics.length > 0) {
+        return state.toxics
+      }
     }
   },
 
   actions: {
     async fetchASOs(payload: queryPayload) {
-      // this.asos = JSON.parse(
-      //   await useRequest(
-      //     `/exportadados?parametro={"empresa":${payload.empresa},"codigo":${payload.codigo},"chave":${payload.chave},"tipoSaida":${payload.tipoSaida},"funcionarioInicio":${payload.funcionarioInicio},"funcionarioFim":${payload.funcionarioFim},"pFuncionario":${payload.pFuncionario},"funcionario":${payload.funcionario},"dataInicio":"${payload.dataInicio}","dataFim":"${payload.dataFim}","pDataIncAso":${payload.pDataIncAso},"tpExame":"${payload.tpExame}"}`,
-      //     {
-      //       method: 'get'
-      //     }
-      //   )
-      // ) as Aso[]
-
       const { data } = await useAxios(
         `/exportadados?parametro={"empresa":${payload.empresa},"codigo":${payload.codigo},"chave":${payload.chave},"tipoSaida":${payload.tipoSaida},"funcionarioInicio":${payload.funcionarioInicio},"funcionarioFim":${payload.funcionarioFim},"pFuncionario":${payload.pFuncionario},"funcionario":${payload.funcionario},"dataInicio":"${payload.dataInicio}","dataFim":"${payload.dataFim}","pDataIncAso":${payload.pDataIncAso},"tpExame":"${payload.tpExame}"}`,
         {
@@ -86,6 +85,20 @@ export const useASO = defineStore('aso', {
       )
 
       this.asos = data
+      await this.updateCNPJ()
+    },
+
+    async fetchToxicologico(payload: queryPayloadToxicologico) {
+      const { data } = await useAxios(
+        `/exportadados?parametro={"empresa":${payload.empresa},"codigo":${payload.codigo},"chave":${payload.chave},"tipoSaida":${payload.tipoSaida},"funcionarioInicio":${payload.funcionarioInicio},"funcionarioFim":${payload.funcionarioFim},"pFuncionario":${payload.pFuncionario},"funcionario":${payload.funcionario},"dataInicio":"${payload.dataInicio}","dataFim":"${payload.dataFim}","pDataToxic":"${payload.pDataToxic}"}`,
+        {
+          method: 'get'
+        }
+      )
+
+      this.auxToxics = data
+
+      this.toxics.push(...this.auxToxics)
       await this.updateCNPJ()
     },
 
@@ -177,6 +190,15 @@ export const useASO = defineStore('aso', {
           return this.listCNPJ.filter((company) => {
             if (aso.CODIGOEMPRESA === company.id) {
               return (aso.NRINSCEMPRESA = company.cnpj)
+            }
+          })
+        })
+      }
+      if (this.toxics) {
+        this.toxics = this.toxics.filter((toxics) => {
+          return this.listCNPJ.filter((company) => {
+            if (toxics.CODIGOEMPRESA === company.id) {
+              return (toxics.NRINSCEMPRESA = company.cnpj)
             }
           })
         })
