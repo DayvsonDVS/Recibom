@@ -25,7 +25,7 @@
     } in ASO.getToxic" :class="!NMMED || !CODSEQEXAME || !CNPJLAB ? 'error' : ''">
         <Column>{{ NRINSCEMPRESA?.replace(/[,.\/-]/g, '') }} </Column>
         <Column>{{ CPFTRAB?.replace(/[,.\/-]/g, '') }} </Column>
-        <Column>{{ DTEXAME }} </Column>
+        <Column>{{ converterDataBrasileiraParaAmericana(DTEXAME) }} </Column>
         <Column>{{ CNPJLAB?.replace(/[,.\/-]/g, '').replace(/^0+/, '') }} </Column>
         <Column>{{ CODSEQEXAME }} </Column>
         <Column>{{ NMMED }} </Column>
@@ -42,6 +42,25 @@ import { Table, Row, Column } from 'bumi-components-new'
 import { useASO } from '@/stores/aso'
 
 const ASO = useASO()
+
+function converterDataBrasileiraParaAmericana(dataBrasileira: string): string {
+  // Divide a data no formato dd/mm/yyyy em partes
+  const partes = dataBrasileira.split('/');
+
+  if (partes.length === 3) {
+    // Rearranja as partes para o formato yyyy-mm-dd
+    const dia = partes[0];
+    const mes = partes[1];
+    const ano = partes[2];
+
+    return `${ano}${mes}${dia}`;
+  }
+  else {
+    return ""
+  }
+
+}
+
 </script>
 
 <style lang="scss" scoped>
